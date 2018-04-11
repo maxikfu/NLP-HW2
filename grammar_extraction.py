@@ -58,12 +58,12 @@ def collapse_unit_productions(unite_dict):
     del unite_dict['lexicon']
     new_dic = {}
     for key in unite_dict:
-        if key not in lexicon:
+        if key not in lexicon: #we don't collapse terminla productions
             new_dic[key]=set()
             set_of_right_side = unite_dict[key]
             for single_right_side in set_of_right_side:
-                if len(single_right_side)==1:
-                    for e in unite_dict[single_right_side[0]]:
+                if len(single_right_side)==1:# single in right side
+                    for e in unite_dict[single_right_side[0]]: #replacing single element with other
                         new_dic[key].add(e)
                 else:
                     new_dic[key].add(single_right_side)
