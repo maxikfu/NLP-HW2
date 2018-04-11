@@ -63,11 +63,12 @@ def collapse_unit_productions(unite_dict):
             set_of_right_side = unite_dict[key]
             for single_right_side in set_of_right_side:
                 if len(single_right_side)==1:
-                    if single_right_side[0] in unite_dict:
-                        for e in unite_dict[single_right_side[0]]:
-                            new_dic[key].add(e)
-                new_dic[key].add(single_right_side)
-        new_dic[key] = unite_dict[key]
+                    for e in unite_dict[single_right_side[0]]:
+                        new_dic[key].add(e)
+                else:
+                    new_dic[key].add(single_right_side)
+        else:
+            new_dic[key] = unite_dict[key]
     return new_dic
 
 
