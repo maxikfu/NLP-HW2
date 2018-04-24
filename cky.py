@@ -65,8 +65,8 @@ def print_tree(full_table):
             result = result + ' ' + working_obj.terminal + ' ) '
         else:
             two_terminals = None
-            stack.append(working_obj.right_backpointer)
-            stack.append(working_obj.left_backpointer)
+            stack.append(working_obj.children[1])
+            stack.append(working_obj.children[0])
     print(result)
 
 
