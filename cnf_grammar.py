@@ -24,12 +24,12 @@ def extracting_cfg(corpus_root, file_pattern):#returns cfg eith only 2 non-termi
                     right_side = []
                     for children in subtree:
                         if isinstance(children, str):  # reached leaf node
-                            right_side.append(children.lower())
+                            right_side.append(children)
                             if left_side in lexicon:
-                                lexicon[left_side].add(children.lower())
+                                lexicon[left_side].add(children)
                             else:
                                 lexicon[left_side] = set()
-                                lexicon[left_side].add(children.lower())
+                                lexicon[left_side].add(children)
                         else:  # still not leafe node
                             right_side.append(children.label())
                     while len(right_side) > 2:  # making only 2 non-terminals on the right side
