@@ -6,6 +6,5 @@ class CellContent:
             self.children = [None]
         else:
             self.children = [left,right]
-        self.left_backpointer = left
-        self.right_backpointer = right
         self.content = content
+        self.parent = None

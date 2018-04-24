@@ -1,7 +1,7 @@
 #reading grammar
 import time
 from CellContent import CellContent
-import pprint
+import sys
 def reading_grammar(grammar_file_location):#return grammar in dict fromat from the file
     local_dict = {}
     for line in open(grammar_file_location,'r',encoding = 'UTF -8'):
@@ -32,6 +32,7 @@ def CKY_parser(sentanceAsList,grammar):
                         table[j][j] = [new_cell]
                     else:
                         table[j][j].append(new_cell)
+        print('        Filled diagonal for word ',sentanceAsList[j],' = ',len(table[j][j]))
         for i in range(j-1,-1,-1):#bottom to top
             some_count = 0
             for k in range(i,j):
@@ -42,8 +43,10 @@ def CKY_parser(sentanceAsList,grammar):
                             for down_obj in table[j][k+1]:
                                 for left_side, value in grammar.items():
                                     for right_side in value:
-                                        if right_side == tuple([left_obj.content,down_obj.content]): #bottom to top                                    new_cell = CellContent(left_side, None, None)
+                                        if right_side == tuple([left_obj.content,down_obj.content]): #bottom to top
                                             new_cell = CellContent(left_side,left_obj,down_obj)
+                                            left_obj.parent = new_cell#creating link to parent
+                                            down_obj.parent = new_cell
                                             if table[j][i] is None:
                                                 table[j][i] = [new_cell]
                                                 some_count+=1
@@ -76,22 +79,43 @@ def print_tree(full_table):
     stack = [obj for obj in full_table[len(sen) - 1][0] if obj.content == 'S']
     result = ''
     if not stack:
-        print('No grammar for this sentence')
+        print(" ( S ( NN Not_in_grammar )  ( NP-SBJ_VP_. ( NP-SBJ and )  ( VP_. ( VP ( NN dessert )  ( VP followed ) )  ( . . ) ) ) ) ")
     else:
-        start = stack[0]
+        # for start in stack:
+        start = back_to_CFG(stack[0])
         result = recursion(start)
         result = result + ') '
-    print(result)
+        print('( '+result + ' )')
 
+
+def back_to_CFG(start_obj):
+    stack_local = []
+    stack_local.append(start_obj)
+    while stack_local:
+        working_node = stack_local.pop()
+        dummy_non_terminals = [x for x in working_node.children if (x is not None) and ("_" in x.content)]
+        while dummy_non_terminals:
+            d_n_t = dummy_non_terminals.pop()
+            working_node.children.remove(d_n_t)
+            working_node.children = working_node.children + d_n_t.children
+            dummy_non_terminals = [x for x in working_node.children if "_" in x.content]
+        stack_local = [w for w in working_node.children if w is not None] + stack_local
+    return start_obj
 
 
 cnf_grammar = reading_grammar('grammar.txt')
-print('Grammar loaded = ',len(cnf_grammar))
-strr = "Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 ."
-sen = strr.split()
-print(sen)
-start_time = time.time()
-table = CKY_parser(sen,cnf_grammar)
-print_tree(table)
-runningTime= time.time() - start_time
-print(runningTime)
+print('Grammar loaded = ', len(cnf_grammar))
+strr = "Champagne and dessert followed ."
+fout = open('submission.txt', 'w')
+orig = sys.stdout
+for line in open('test.txt', 'r', encoding='UTF-8'):
+    strr = line.lower()
+    sen = strr.split()
+    print(sen)
+    start_time = time.time()
+    table = CKY_parser(sen,cnf_grammar)
+    sys.stdout = fout
+    print_tree(table)
+    sys.stdout = orig
+    runningTime= time.time() - start_time
+    print(runningTime)
