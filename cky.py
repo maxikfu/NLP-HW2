@@ -32,7 +32,7 @@ def CKY_parser(sentanceAsList,grammar):
                         table[j][j] = [new_cell]
                     else:
                         table[j][j].append(new_cell)
-        print('        Filled diagonal for word ',sentanceAsList[j],' = ',len(table[j][j]))
+        print('        Filled diagonal for word ',sentanceAsList[j])
         for i in range(j-1,-1,-1):#bottom to top
             some_count = 0
             for k in range(i,j):
@@ -109,7 +109,7 @@ strr = "Champagne and dessert followed ."
 fout = open('submission.txt', 'w')
 orig = sys.stdout
 for line in open('test.txt', 'r', encoding='UTF-8'):
-    strr = line.lower()
+    strr = line
     sen = strr.split()
     print(sen)
     start_time = time.time()
