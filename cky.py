@@ -59,7 +59,7 @@ def CKY_parser(sentanceAsList,grammar):
                                                     table[j][i].append(new_cell)
                                                     some_count+=1
             print('        Filled row ',i,' number of obj in the cell = ',some_count)
-        print('Filled column for word ',sentanceAsList[j],' in ', time.time() - s)
+        print('Filled column for word #',sentanceAsList[j],'# in ', time.time() - s)
     return table
 
 
@@ -76,7 +76,8 @@ def recursion(obj):
 
 def print_tree(full_table):
     stack = []
-    stack = [obj for obj in full_table[len(sen) - 1][0] if obj.content == 'S']
+    if full_table[len(sen) - 1][0] is not None:
+        stack = [obj for obj in full_table[len(sen) - 1][0] if obj.content == 'S']
     result = ''
     if not stack:
         print(" ( S ( NN Not_in_grammar )  ( NP-SBJ_VP_. ( NP-SBJ and )  ( VP_. ( VP ( NN dessert )  ( VP followed ) )  ( . . ) ) ) ) ")
