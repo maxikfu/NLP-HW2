@@ -3,7 +3,7 @@ import pprint
 from nltk.corpus import BracketParseCorpusReader
 import time
 
-corpus_root = r"wsj"
+corpus_root = r"C:\Users\maksi\Documents\Python\NLP class\data_for_HW2\wsj"
 file_pattern = r".*/wsj_.*\.mrg"
 
 

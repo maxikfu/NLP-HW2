@@ -20,7 +20,7 @@ def CKY_parser(sentanceAsList,grammar):
         newList = [None] * (i+1)
         table.append(newList)
     s = time.time()
-    print('Total number of words ',len(sentanceAsList))
+    #print('Total number of words ',len(sentanceAsList))
     for j in range(0,len(sentanceAsList)):#left to right
          #looking for word in grammar right side
         for left_side,value in grammar.items():
@@ -32,7 +32,7 @@ def CKY_parser(sentanceAsList,grammar):
                         table[j][j] = [new_cell]
                     else:
                         table[j][j].append(new_cell)
-        print('        Filled diagonal for word ',sentanceAsList[j])
+        #print('        Filled diagonal for word ',sentanceAsList[j])
         for i in range(j-1,-1,-1):#bottom to top
             some_count = 0
             for k in range(i,j):
@@ -45,8 +45,6 @@ def CKY_parser(sentanceAsList,grammar):
                                     for right_side in value:
                                         if right_side == tuple([left_obj.content,down_obj.content]): #bottom to top
                                             new_cell = CellContent(left_side,left_obj,down_obj)
-                                            left_obj.parent = new_cell#creating link to parent
-                                            down_obj.parent = new_cell
                                             if table[j][i] is None:
                                                 table[j][i] = [new_cell]
                                                 some_count+=1
@@ -58,8 +56,8 @@ def CKY_parser(sentanceAsList,grammar):
                                                 if not already_there:
                                                     table[j][i].append(new_cell)
                                                     some_count+=1
-            print('        Filled row ',i,' number of obj in the cell = ',some_count)
-        print('Filled column for word #',sentanceAsList[j],'# in ', time.time() - s)
+            #print('        Filled row ',i,' number of obj in the cell = ',some_count)
+        #print('Filled column for word #',sentanceAsList[j],'# in ', time.time() - s)
     return table
 
 
@@ -74,19 +72,26 @@ def recursion(obj):
             tree_string = tree_string + ' ' + obj.terminal + ' '
     return tree_string
 
-def print_tree(full_table):
+def print_tree(full_table,l):
     stack = []
+    sen = l.split()
     if full_table[len(sen) - 1][0] is not None:
         stack = [obj for obj in full_table[len(sen) - 1][0] if obj.content == 'S']
     result = ''
+    orig = sys.stdout
+    sys.stdout = fout
     if not stack:
-        print(" ( S ( NN Not_in_grammar )  ( NP-SBJ_VP_. ( NP-SBJ and )  ( VP_. ( VP ( NN dessert )  ( VP followed ) )  ( . . ) ) ) ) ")
+        result = '(S'
+        for x in sen:
+            result = result + '( NP ' + x + ')'
+        print(result + ')')
     else:
         # for start in stack:
         start = back_to_CFG(stack[0])
         result = recursion(start)
         result = result + ') '
-        print('( '+result + ' )')
+        print(result)
+    sys.stdout = orig
 
 
 def back_to_CFG(start_obj):
@@ -104,19 +109,18 @@ def back_to_CFG(start_obj):
     return start_obj
 
 
-cnf_grammar = reading_grammar('grammar.txt')
-print('Grammar loaded = ', len(cnf_grammar))
-strr = "Champagne and dessert followed ."
+
+
+grammar_file_path = 'grammar.txt'
+test_set_file_path = 'test.txt'
+cnf_grammar = reading_grammar(grammar_file_path)
 fout = open('submission.txt', 'w')
-orig = sys.stdout
-for line in open('test.txt', 'r', encoding='UTF-8'):
+for line in open(test_set_file_path, 'r', encoding='UTF-8'):
     strr = line
     sen = strr.split()
-    print(sen)
+    print("Parsing sentence ",sen )
     start_time = time.time()
     table = CKY_parser(sen,cnf_grammar)
-    sys.stdout = fout
-    print_tree(table)
-    sys.stdout = orig
+    print_tree(table,line)
     runningTime= time.time() - start_time
-    print(runningTime)
+    #(runningTime)
